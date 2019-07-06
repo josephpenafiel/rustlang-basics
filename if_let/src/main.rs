@@ -47,7 +47,9 @@ fn main() {
     let mut count = 0;
     let coin = Coin::Quarter(UsState::Alaska);
     match coin {
-        Coin::Quarter(state) => println!("[MATCH] State quarter from {:?}", state),
+        Coin::Quarter(state) => {
+            println!("[MATCH] State quarter from {:?}", state);
+        },
         _ => count += 1,
     }
 
