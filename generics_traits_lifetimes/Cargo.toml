@@ -1,11 +1,7 @@
 [package]
-name = "Rustlang"
+name = "generics_traits_lifetimes"
 version = "0.1.0"
 authors = ["josephpenafiel <josephpenafiel@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-
-[[bin]]
-name = "Rustlang"
-path = "main.rs"

@@ -20,6 +20,7 @@ enum Coin {
     Quarter(UsState),
 }
 
+#[allow(dead_code)]
 fn main() {
     println!("Hello, world!");
 
