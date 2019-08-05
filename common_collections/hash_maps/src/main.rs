@@ -40,7 +40,7 @@ fn main() {
 
     // println!("{}, {}", field_name, field_value) // won't work
 
-    // accessing values in a Hash Map // 
+    // ACCESSING VALUES IN A HASHMAP // 
 
     let team_name = "blue".to_string();
 

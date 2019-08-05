@@ -1,15 +1,11 @@
-// Closures // 
+// Closures //
 /*
 They're anonymous functions that can be saved in a variable, or pass as arguments
-to other functions. They can be created in one place and then be called in a 
-different context. Closures can capture values from the cope in which they're defined. 
+to other functions. They can be created in one place and then be called in a
+different context. Closures can capture values from the cope in which they're defined.
 */
 
-
-use std::{
-    time::Duration, 
-    thread,
-    collections::HashMap};
+use std::{collections::HashMap, thread, time::Duration};
 
 // fn expensive_calculation_sim(intensity: u32) -> u32 {
 //     println!("Calculating...(slow)");
@@ -64,9 +60,9 @@ use std::{
 //     }
 // }
 
-/* USING CLOSURES */ 
+/* USING CLOSURES */
 // fn generate_workout(intensity: u32, rand_val: u32) {
-// //define the closure 
+// //define the closure
 //     let expensive_closure = |num| {
 //         println!("calculating... (closure)");
 //         thread::sleep(Duration::from_secs(2));
@@ -97,21 +93,27 @@ use std::{
 /* OPTIMIZED CLOSURE */
 
 struct Cacher<T>
-    where T: Fn(u32) -> u32{ // T is a closure trait
-        calculation: T,
-        value: HashMap<u32, u32>
-    }
+where
+    T: Fn(u32) -> u32,
+{
+    // T is a closure trait
+    calculation: T,
+    value: HashMap<u32, u32>,
+}
 
-impl <T> Cacher<T> where T: Fn(u32) -> u32 {
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
     fn new(calculation: T) -> Cacher<T> {
         Cacher {
             calculation,
-            value: HashMap::new()
+            value: HashMap::new(),
         }
     }
 
-    fn value(&mut self, arg: u32) -> u32 {
-        
+    fn get_or_set_value(&mut self, arg: u32) -> u32 {
+
         match self.value.get(&arg) {
             Some(v) => *v,
             None => {
@@ -120,12 +122,13 @@ impl <T> Cacher<T> where T: Fn(u32) -> u32 {
                 val
             }
         }
-        
+
     }
 }
 
+
 fn generate_workout(intensity: u32, rand_val: u32) {
-//define the closure 
+    //define the closure
     let mut expensive_cacher = Cacher::new(|num| {
         println!("calculating... (cacher)");
         thread::sleep(Duration::from_secs(2));
@@ -135,11 +138,11 @@ fn generate_workout(intensity: u32, rand_val: u32) {
     if intensity < 25 {
         println!(
             "Today, do {} pushups!",
-            expensive_cacher.value(intensity)
+            expensive_cacher.get_or_set_value(intensity)
         );
         println!(
             "Next, do {} situps!",
-            expensive_cacher.value(intensity)
+            expensive_cacher.get_or_set_value(intensity)
         );
     } else {
         if rand_val == 3 {
@@ -147,16 +150,14 @@ fn generate_workout(intensity: u32, rand_val: u32) {
         } else {
             println!(
                 "Today, run for {} minutes!",
-                expensive_cacher.value(intensity)
+                expensive_cacher.get_or_set_value(intensity)
             );
         }
     }
 
 }
 
-
-
-fn main () {
+fn main() {
     let sim_user_val = 10;
     let sim_rand_val = 7;
 
@@ -165,108 +166,104 @@ fn main () {
     //     sim_rand_val
     // );
 
-    // CAPTURING THE ENVIRONMENT WITH CLOSURES // 
-    let x = 4; 
+    // CAPTURING THE ENVIRONMENT WITH CLOSURES //
+    let x = 4;
     let equal_to_x = |z| z == x;
-    let y = 4; 
+    let y = 4;
 
     assert!(equal_to_x(4));
 
     /*
-    fn equal_to_x(z: i32) -> bool { z == x} // calling this function won't work since x is not in that scope
+        fn equal_to_x(z: i32) -> bool { z == x} // calling this function won't work since x is not in that scope
 
-    Closures can capture values from their environment in three ways, which directly map to the three ways a 
-    function can take a parameter: taking ownership, borrowing mutably, and borrowing immutably. These are 
-    encoded in the three Fn traits as follows:
+        Closures can capture values from their environment in three ways, which directly map to the three ways a
+        function can take a parameter: taking ownership, borrowing mutably, and borrowing immutably. These are
+        encoded in the three Fn traits as follows:
 
-    * FnOnce consumes the variables it captures from its enclosing scope, known as the closure’s environment. 
-    To consume the captured variables, the closure must take ownership of these variables and move them into 
-    the closure when it is defined. The Once part of the name represents the fact that the closure can’t take 
-    ownership of the same variables more than once, so it can be called only once.
+        * FnOnce consumes the variables it captures from its enclosing scope, known as the closure’s environment.
+        To consume the captured variables, the closure must take ownership of these variables and move them into
+        the closure when it is defined. The Once part of the name represents the fact that the closure can’t take
+        ownership of the same variables more than once, so it can be called only once.
 
-    * FnMut can change the environment because it mutably borrows values.
+        * FnMut can change the environment because it mutably borrows values.
 
-    * Fn borrows values from the environment immutably.
+        * Fn borrows values from the environment immutably.
 
-    Rust infers which trait to use based on how the closure uses the values from the environment.
+        Rust infers which trait to use based on how the closure uses the values from the environment.
 
-    If you want to force the closure to take ownership of the values it uses in the environment, you can use
-    the move keyword before the parameter list.
+        If you want to force the closure to take ownership of the values it uses in the environment, you can use
+        the move keyword before the parameter list.
 
-    fn main() {
-    let x = vec![1, 2, 3];
+        fn main() {
+        let x = vec![1, 2, 3];
 
-    let equal_to_x = move |z| z == x;
+        let equal_to_x = move |z| z == x;
 
-    println!("can't use x here: {:?}", x);
+        println!("can't use x here: {:?}", x);
 
-    let y = vec![1, 2, 3];
+        let y = vec![1, 2, 3];
 
-    assert!(equal_to_x(y));
-}
+        assert!(equal_to_x(y));
+    }
 
-    */
+        */
 
     // PROCESSING A SERIES OF ITEMS WITH ITERATORS //
-    
+
     /*
-    The iterator pattern allows you to perform some task on a sequence of items in turn. An iterator is responsible 
-    for the logic of iterating over each item and determining when the sequence has finished. When you use iterators, 
+    The iterator pattern allows you to perform some task on a sequence of items in turn. An iterator is responsible
+    for the logic of iterating over each item and determining when the sequence has finished. When you use iterators,
     you don’t have to reimplement that logic yourself.
     */
 
-    let v1 = vec![1,2,3];
+    let v1 = vec![1, 2, 3];
 
-    let v1_iter = v1.iter(); // create an iterator 
+    let v1_iter = v1.iter(); // create an iterator
 
     for val in v1_iter {
         println!("got: {:?}", val);
     }
 
     /*
-    iterators implement a trait name Iterator that is defined in the standard library. 
-    The Iterator trait requires implementors to define the method next. 
+    iterators implement a trait name Iterator that is defined in the standard library.
+    The Iterator trait requires implementors to define the method next.
     */
 
     /*
-    Other methods defined on the Iterator trait, known as iterator adaptors, allow you to change iterators 
-    into different kinds of iterators. You can chain multiple calls to iterator adaptors to perform complex 
-    actions in a readable way. But because all iterators are lazy, you have to call one of the consuming 
+    Other methods defined on the Iterator trait, known as iterator adaptors, allow you to change iterators
+    into different kinds of iterators. You can chain multiple calls to iterator adaptors to perform complex
+    actions in a readable way. But because all iterators are lazy, you have to call one of the consuming
     adaptor methods to get results from calls to iterator adaptors.
     The collect method consumes the iterator and collects the resulting value into a collection
-    data type. 
+    data type.
     */
 
-    let v2: Vec<_> = v1.iter().map(|x| x + 1).collect(); 
-
-
+    let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
 }
 
 #[derive(PartialEq, Debug)]
 struct Shoe {
-    size: u32, 
-    style: String
+    size: u32,
+    style: String,
 }
 
 fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
-    shoes.into_iter()
-    .filter(|s| s.size == shoe_size)
-    .collect()
+    shoes.into_iter().filter(|s| s.size == shoe_size).collect()
 }
 
 
 #[test]
 fn call() {
     let mut c = Cacher::new(|a| a);
-    let v1 = c.value(1);
+    let v1 = c.get_or_set_value(1);
     assert_eq!(v1, 1);
-    let v2 = c.value(2);
+    let v2 = c.get_or_set_value(2);
     assert_eq!(v2, 2);
 }
 
 #[test]
 fn iter_demo() {
-    let v1 = vec![1,2,3];
+    let v1 = vec![1, 2, 3];
     let mut v1_iter = v1.iter();
 
     assert_eq!(v1_iter.next(), Some(&1));
@@ -289,9 +286,18 @@ fn iterator_sum() {
 #[test]
 fn filters_by_size() {
     let shoes = vec![
-        Shoe{size: 10, style: "sneaker".to_string()},
-        Shoe{size: 13, style: "sandal".to_string()},
-        Shoe{size: 10, style: "boot".to_string()}
+        Shoe {
+            size: 10,
+            style: "sneaker".to_string(),
+        },
+        Shoe {
+            size: 13,
+            style: "sandal".to_string(),
+        },
+        Shoe {
+            size: 10,
+            style: "boot".to_string(),
+        },
     ];
 
     let in_my_size = shoes_in_my_size(shoes, 10);
@@ -299,8 +305,14 @@ fn filters_by_size() {
     assert_eq!(
         in_my_size,
         vec![
-            Shoe{size: 10, style: "sneaker".to_string()},
-            Shoe{size: 10, style: "boot".to_string()}
+            Shoe {
+                size: 10,
+                style: "sneaker".to_string()
+            },
+            Shoe {
+                size: 10,
+                style: "boot".to_string()
+            }
         ]
     )
 }
