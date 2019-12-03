@@ -35,9 +35,34 @@ impl Iterator for Fibonacci {
     }
 }
 
-fn main() {
-    let my_fibo = Fibonacci::new(Some(100));
 
+
+mod words;
+
+use words::Words;
+
+
+fn main() {
+    let my_fibo = Fibonacci::new(Some(100))
+    .take(2)
+    .map(|fibo| fibo * 2)
+    .collect::<Vec<usize>>();
+
+    let a = Words::new("hello world hello");
+
+    for w in &a {
+        println!("{}", w);
+    }
+
+    // println!("{:?}", a); a still valid
+}
+
+#[test]
+fn words_struct() {
+    let uw = Words::new("lorem ipsum dolor sit amet, consectetur adipiscing elit");
+    assert_eq!((&uw).into_iter().count(), 8);
+    let upper: Vec<_> = uw.iter().map(|w| w.to_uppercase()).collect();
+    assert_eq!(upper[0], "LOREM");
 }
 
 #[test]
